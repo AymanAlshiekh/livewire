@@ -16,6 +16,13 @@ class Post extends Model
         'body',
     ];
 
+    public function getImageAttribute($image){
+        if ($image) {
+            return asset('/assets/images/' . $image);
+        } else {
+            return asset('/assets/images/empty.jpg');
+        }
+    }
     public function user(){
         return $this->belongsTo(User::class);
     }

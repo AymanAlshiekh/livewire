@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Str;
 
 class PostsController extends Controller
 {
+
+    public function __constract()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -25,7 +34,8 @@ class PostsController extends Controller
      */
     public function create()
     {
-        return view('frontend.create');
+        $categories = Category::all();
+        return view('frontend.create', compact('categories'));
     }
 
     /**
@@ -36,7 +46,22 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'title'         => 'required|string|max:255',
+            'category_id'   => 'required|integer',
+            'body'          => 'required|string',
+            'image'         => 'required|image|max:5000|mimes:png,jpg,jpeg',
+        ]);
+        $image = $request->file('image');
+        $fileName = Str::slug($request->title).'.'.$image->getClientOriginalExtension();
+        $path = public_path('/assets/images/'.$fileName);
+        Image::make($image->getRealPath())->save($path, 100);
+        $data['image'] = $fileName;
+        Auth::user()->posts()->create($data);
+        return redirect()->route('posts.index')->with([
+            'message' => 'post created successfully',
+            'alert-type' => 'success',
+        ]);
     }
 
     /**
