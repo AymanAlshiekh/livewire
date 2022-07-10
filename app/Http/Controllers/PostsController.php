@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostsRequest;
 use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -44,19 +45,12 @@ class PostsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostsRequest $request)
     {
-        $data = $request->validate([
-            'title'         => 'required|string|max:255',
-            'category_id'   => 'required|integer',
-            'body'          => 'required|string',
-            'image'         => 'required|image|max:5000|mimes:png,jpg,jpeg',
-        ]);
-        $image = $request->file('image');
-        $fileName = Str::slug($request->title).'.'.$image->getClientOriginalExtension();
-        $path = public_path('/assets/images/'.$fileName);
-        Image::make($image->getRealPath())->save($path, 100);
-        $data['image'] = $fileName;
+        $data = $request->validated();
+        $path = public_path('/assets/images/'.$data['slug']);
+        Image::make($request->file('image')->getRealPath())->save($path, 100);
+        $data['image'] = $data['slug'];
         Auth::user()->posts()->create($data);
         return redirect()->route('posts.index')->with([
             'message' => 'post created successfully',

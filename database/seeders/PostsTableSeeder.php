@@ -24,6 +24,7 @@ class PostsTableSeeder extends Seeder
                 'user_id'           =>  User::inRandomOrder()->first()->id,
                 'category_id'       =>  Category::inRandomOrder()->first()->id,
                 'title'             =>  $faker->sentence(4),
+                'slug'              =>  $faker->unique()->slug,
                 'body'              =>  $faker->paragraph(),
                 'image'             =>  sprintf('%02d', $i).'.jpg',
             ]);
