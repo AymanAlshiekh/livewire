@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Str;
 
@@ -66,7 +67,8 @@ class PostsController extends Controller
      */
     public function show($id)
     {
-        return view('frontend.show');
+        $post = Post::with(['user', 'category'])->findOrFail($id);
+        return view('frontend.show', compact('post'));
     }
 
     /**
@@ -77,7 +79,9 @@ class PostsController extends Controller
      */
     public function edit($id)
     {
-        return view('frontend.edit');
+        $post = Post::findOrFail($id);
+        $categories = Category::all();
+        return view('frontend.edit', compact('post', 'categories'));
     }
 
     /**
@@ -87,9 +91,21 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PostsRequest $request, $id)
     {
-        //
+        $data = $request->validated();
+        $post = Post::findOrFail($id);
+        if ($request->file('image')) {
+            File::delete(public_path('/assets/images/'.$post->slug));
+            $path = public_path('/assets/images/'.$post->slug);
+            Image::make($request->file('image')->getRealPath())->save($path, 100);
+            $data['image'] = $post->slug;
+        }
+        $post->update($data);
+        return redirect()->route('posts.index')->with([
+            'message' => 'post updated successfully',
+            'alert-type' => 'success',
+        ]);
     }
 
     /**
@@ -100,6 +116,12 @@ class PostsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Post::findOrFail($id);
+        File::delete(public_path('/assets/images/'.$post->slug));
+        $post->delete();
+        return redirect()->route('posts.index')->with([
+            'message' => 'post deleted successfully',
+            'alert-type' => 'success',
+        ]);
     }
 }

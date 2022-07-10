@@ -27,17 +27,24 @@ class PostsRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'title'         => 'required|string|max:255',
+            'slug'          => 'string|max:255',
             'category_id'   => 'required|integer',
             'body'          => 'required|string',
-            'image'         => 'required|image|max:5000|mimes:png,jpg,jpeg',
         ];
+        if ($this->method() == 'POST') {
+            $rules['image'] =  'required|image|max:5000|mimes:png,jpg,jpeg';
+        } else {
+            $rules['image'] =  'nullable|image|max:5000|mimes:png,jpg,jpeg';
+        }
+
+        return $rules;
     }
     protected function getValidatorInstance()
     {
         $data = $this->all();
-        if (isset($data['title'])) {
+        if (isset($data['title']) && ($this->method() == 'POST')) {
             $data['slug'] = $this->generate_slug($data['title']);
         }
         $this->getInputSource()->replace($data);
