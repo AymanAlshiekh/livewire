@@ -3,6 +3,10 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostsController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Livewire\Posts;
+use App\Http\Livewire\CreatePost;
+use App\Http\Livewire\ShowPost;
+use App\Http\Livewire\EditPost;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,4 +23,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/dashbocard', [HomeController::class, 'index'])->name('dashboard');
     Route::resource('/posts', PostsController::class)->name('*', 'posts');
+    //////////  livewire    ///////
+    Route::get('/livewire-posts', [PostsController::class, 'index_livewire'])->name('livewire-posts');
+    Route::get('/livewire/posts', Posts::class)->name('livewire');
+    Route::get('/create/post', CreatePost::class)->name('l-create-post');
+    Route::get('/edit/post/{id}', EditPost::class);
+    Route::get('/show/post/{id}', ShowPost::class);
 });

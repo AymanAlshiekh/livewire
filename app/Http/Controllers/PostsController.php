@@ -124,4 +124,8 @@ class PostsController extends Controller
             'alert-type' => 'success',
         ]);
     }
+    public function index_livewire()
+    {
+        return view('frontend.index-livewire');
+    }
 }

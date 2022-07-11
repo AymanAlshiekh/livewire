@@ -19,6 +19,12 @@
                     <x-jet-nav-link href="{{ route('posts.index') }}" :active="request()->routeIs('posts.index')">
                         {{ __('posts') }}
                     </x-jet-nav-link>
+                    <x-jet-nav-link href="{{ route('livewire-posts') }}" :active="request()->routeIs('livewire-posts')">
+                        {{ __('livewire-posts') }}
+                    </x-jet-nav-link>
+                    <x-jet-nav-link href="{{ route('livewire') }}" :active="request()->routeIs('livewire')">
+                        {{ __('livewire-posts 2') }}
+                    </x-jet-nav-link>
                 </div>
             </div>
 
