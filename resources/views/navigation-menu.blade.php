@@ -25,6 +25,9 @@
                     <x-jet-nav-link href="{{ route('livewire') }}" :active="request()->routeIs('livewire')">
                         {{ __('livewire-posts 2') }}
                     </x-jet-nav-link>
+                    <x-jet-nav-link href="{{ route('dynamic-posts') }}" :active="request()->routeIs('dynamic-posts')">
+                        {{ __('dynamic posts') }}
+                    </x-jet-nav-link>
                 </div>
             </div>
 
